@@ -1,0 +1,13 @@
+[Unit]
+Description=frp reverse proxy server (frps) daemon
+After=network.target network-online.target syslog.target
+
+[Service]
+Type=simple
+ExecStart={{ frp_bin_dir }}/frps -c {{ frp_conf_dir }}/{{ frps_conf }}
+Restart=always
+RestartSec=1min
+ExecStop=/usr/bin/killall frps
+
+[Install]
+WantedBy=multi-user.target

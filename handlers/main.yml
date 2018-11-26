@@ -1,0 +1,12 @@
+---
+- name: restart frpc
+  service:
+    name: frpc
+    state: restarted
+  when: enable_frpc and frpc_config.stat.exists
+
+- name: restart frps
+  service:
+    name: frps
+    state: restarted
+  when: enable_frps and frps_config.stat.exists
