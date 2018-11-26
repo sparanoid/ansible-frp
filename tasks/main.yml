@@ -1,0 +1,109 @@
+---
+- name: download frp
+  unarchive:
+    src: "{{ frp_pkg_url }}"
+    dest: /tmp/
+    remote_src: yes
+    mode: 0440
+
+- name: install frpc
+  copy:
+    src: "/tmp/{{ frp_pkg_name }}/frpc"
+    dest: "{{ frp_bin_dir }}/frpc"
+    mode: 0744
+    remote_src: yes
+  notify: restart frpc
+
+- name: install frps
+  copy:
+    src: "/tmp/{{ frp_pkg_name }}/frps"
+    dest: "{{ frp_bin_dir }}/frps"
+    mode: 0744
+    remote_src: yes
+  notify: restart frps
+
+- name: sync frpc service
+  template:
+    src: frpc.service
+    dest: /usr/lib/systemd/system/
+    mode: 755
+  tags:
+    - frpc_config
+
+- name: sync frps service
+  template:
+    src: frps.service
+    dest: /usr/lib/systemd/system/
+    mode: 755
+  tags:
+    - frpc_config
+
+- name: check if frpc config exists
+  local_action: stat path={{ inventory_dir }}/files/frp/{{ inventory_hostname }}/{{ frpc_conf }}
+  register: frpc_config
+  tags:
+    - frpc_config
+
+- name: check if frps config exists
+  local_action: stat path={{ inventory_dir }}/files/frp/{{ inventory_hostname }}/{{ frps_conf }}
+  register: frps_config
+  tags:
+    - frps_config
+
+- name: frpc config warning
+  debug:
+    msg: |
+      frpc config does not exists! please create your own config at
+        {{ inventory_dir }}/files/frp/{{ inventory_hostname }}/{{ frpc_conf }}
+  when: not frpc_config.stat.exists and enable_frpc
+  tags:
+    - frpc_config
+    - debug
+
+- name: frps config warning
+  debug:
+    msg: |
+      frps config does not exists! please create your own config at
+        {{ inventory_dir }}/files/frp/{{ inventory_hostname }}/{{ frps_conf }}
+  when: not frps_config.stat.exists and enable_frps
+  tags:
+    - frps_config
+    - debug
+
+- name: sync frpc config
+  synchronize:
+    src: "frp/{{ inventory_hostname }}/{{ frpc_conf }}"
+    dest: /etc/frp/
+  when: frpc_config.stat.exists
+  notify:
+    - restart frpc
+  tags:
+    - frpc_config
+
+- name: sync frps config
+  synchronize:
+    src: "frp/{{ inventory_hostname }}/{{ frps_conf }}"
+    dest: /etc/frp/
+  when: frps_config.stat.exists
+  notify:
+    - restart frps
+  tags:
+    - frps_config
+
+- name: enable frpc
+  service:
+    name: frpc
+    state: started
+    enabled: yes
+  when: enable_frpc
+  tags:
+    - frpc_config
+
+- name: enable frps
+  service:
+    name: frps
+    state: started
+    enabled: yes
+  when: enable_frps
+  tags:
+    - frps_config

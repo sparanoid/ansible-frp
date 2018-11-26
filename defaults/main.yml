@@ -1,0 +1,36 @@
+---
+# blame the frp author for using non-standard os family. I can't use
+# `ansible_os_family` here. You have to define it explicitly. Available options:
+#
+# - darwin
+# - freebsd
+# - linux
+# - windows
+frp_os_family: linux
+
+# the author also defines the arch in a weird way, I just do a simple map for
+# the `x86_64` arch since I only use `x86_64`. Other options available:
+#
+# - amd64
+# - 386
+# - arm64
+# - arm
+# - mips64le
+# - mips64
+# - mipsle
+# - mips
+frp_arch: "{{ (ansible_architecture == 'x86_64') | ternary('amd64', ansible_architecture) }}"
+
+frp_pkg_version: 0.21.0
+frp_pkg_name: "frp_{{ frp_pkg_version }}_{{ frp_os_family }}_{{ frp_arch }}"
+frp_pkg_url: https://github.com/fatedier/frp/releases/download/v{{ frp_pkg_version }}/{{ frp_pkg_name }}.tar.gz
+
+frp_bin_dir: /usr/sbin
+frp_conf_dir: /etc/frp
+
+frpc_conf: frpc.ini
+frps_conf: frps.ini
+
+download_frp: yes
+enable_frpc: no
+enable_frps: yes
