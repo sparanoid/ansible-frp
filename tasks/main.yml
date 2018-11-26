@@ -10,7 +10,7 @@
   copy:
     src: "/tmp/{{ frp_pkg_name }}/frpc"
     dest: "{{ frp_bin_dir }}/frpc"
-    mode: 0744
+    mode: 744
     remote_src: yes
   notify: restart frpc
 
@@ -18,7 +18,7 @@
   copy:
     src: "/tmp/{{ frp_pkg_name }}/frps"
     dest: "{{ frp_bin_dir }}/frps"
-    mode: 0744
+    mode: 744
     remote_src: yes
   notify: restart frps
 
@@ -36,7 +36,7 @@
     dest: /usr/lib/systemd/system/
     mode: 755
   tags:
-    - frpc_config
+    - frps_config
 
 - name: check if frpc config exists
   local_action: stat path={{ inventory_dir }}/files/frp/{{ inventory_hostname }}/{{ frpc_conf }}
