@@ -21,7 +21,7 @@ frp_os_family: linux
 # - mips
 frp_arch: "{{ (ansible_architecture == 'x86_64') | ternary('amd64', ansible_architecture) }}"
 
-frp_pkg_version: 0.21.0
+frp_pkg_version: 0.27.0
 frp_pkg_name: "frp_{{ frp_pkg_version }}_{{ frp_os_family }}_{{ frp_arch }}"
 frp_pkg_url: https://github.com/fatedier/frp/releases/download/v{{ frp_pkg_version }}/{{ frp_pkg_name }}.tar.gz
 
