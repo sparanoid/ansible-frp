@@ -73,7 +73,7 @@
 - name: sync frpc config
   synchronize:
     src: "frp/{{ inventory_hostname }}/{{ frpc_conf }}"
-    dest: /etc/frp/
+    dest: "{{ frp_conf_dir }}/"
   when: frpc_config.stat.exists
   notify:
     - restart frpc
@@ -83,7 +83,7 @@
 - name: sync frps config
   synchronize:
     src: "frp/{{ inventory_hostname }}/{{ frps_conf }}"
-    dest: /etc/frp/
+    dest: "{{ frp_conf_dir }}/"
   when: frps_config.stat.exists
   notify:
     - restart frps
