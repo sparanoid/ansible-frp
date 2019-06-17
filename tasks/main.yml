@@ -95,7 +95,7 @@
     name: frpc
     state: started
     enabled: yes
-  when: enable_frpc
+  when: enable_frpc|bool
   tags:
     - frpc_config
 
@@ -104,6 +104,6 @@
     name: frps
     state: started
     enabled: yes
-  when: enable_frps
+  when: enable_frps|bool
   tags:
     - frps_config
